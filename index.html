@@ -37,17 +37,28 @@
       letter-spacing: 1px;
     }
     .cookie-btn {
+      /* Safari compatibility fixes */
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
       background: none;
       border: none;
       outline: none;
       cursor: pointer;
       padding: 0;
       position: relative;
-      display: inline-flex;
+      /* Use flex instead of inline-flex for Safari */
+      display: flex;
       align-items: center;
       justify-content: center;
       transition: transform 0.1s cubic-bezier(.4,2,.6,1);
       will-change: transform;
+      /* Ensure proper sizing */
+      width: auto;
+      height: auto;
+    }
+    .cookie-btn:focus {
+      outline: 2px solid #7c4a03;
     }
     .cookie-btn.shrink {
       transform: scale(0.9);
@@ -57,6 +68,9 @@
       height: 300px;
       user-select: none;
       display: block;
+      /* Prevent image selection issues in Safari */
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
     .burst {
       position: absolute;
@@ -80,62 +94,61 @@
         transform: translate(var(--x), var(--y)) scale(1.5);
       }
     }
+
   </style>
 </head>
 <body>
   <div class="container">
     <div class="counter" id="counter">Clicked 0 times</div>
-    <button class="cookie-btn" id="cookieBtn">
-      <img src="./cookie.png" alt="Cookie" class="cookie-img" draggable="false">
-    </button>
+    <div class="cookie-btn" id="cookieBtn" tabindex="0" role="button" aria-pressed="false">
+      <img src="cookie.png" alt="Cookie" class="cookie-img" draggable="false">
+    </div>
   </div>
   <script>
-        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))} }(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Os As Pe Ms Fs capture Ve calculateEventProperties js register register_once register_for_session unregister unregister_for_session qs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty zs Ls createPersonProfile Us Rs Bs opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ds debug I Ns getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-        posthog.init('phc_SCMTYgrWdLeEHjj1bVLF9qAAOjliZZmRIMT8sfGm5eo', {
-            api_host: 'https://eu.i.posthog.com',
-            defaults: '2025-05-24',
-            person_profiles: 'identified_only',
-        })
-    </script>
-    <script>
-      const counter = document.getElementById('counter');
-      const cookieBtn = document.getElementById('cookieBtn');
-      let count = 0;
+    const counter = document.getElementById('counter');
+    const cookieBtn = document.getElementById('cookieBtn');
+    let count = 0;
 
-      function updateCounter() {
-        counter.textContent = `Clicked ${count} time${count === 1 ? '' : 's'}`;
+    function updateCounter() {
+      counter.textContent = `Clicked ${count} time${count === 1 ? '' : 's'}`;
+    }
+
+    function burstEmojis(x, y) {
+      const numEmojis = 8;
+      for (let i = 0; i < numEmojis; i++) {
+        const angle = (2 * Math.PI / numEmojis) * i + (Math.random() - 0.5) * 0.3;
+        const distance = 120 + Math.random() * 40;
+        const dx = Math.cos(angle) * distance;
+        const dy = Math.sin(angle) * distance;
+        const emoji = document.createElement('div');
+        emoji.className = 'burst';
+        emoji.textContent = '🍪';
+        emoji.style.setProperty('--x', `${dx}px`);
+        emoji.style.setProperty('--y', `${dy}px`);
+        cookieBtn.appendChild(emoji);
+        setTimeout(() => {
+          emoji.remove();
+        }, 700);
       }
+    }
 
-      function burstEmojis(x, y) {
-        const numEmojis = 8;
-        for (let i = 0; i < numEmojis; i++) {
-          const angle = (2 * Math.PI / numEmojis) * i + (Math.random() - 0.5) * 0.3;
-          const distance = 120 + Math.random() * 40;
-          const dx = Math.cos(angle) * distance;
-          const dy = Math.sin(angle) * distance;
-          const emoji = document.createElement('div');
-          emoji.className = 'burst';
-          emoji.textContent = '🍪';
-          emoji.style.setProperty('--x', `${dx}px`);
-          emoji.style.setProperty('--y', `${dy}px`);
-          cookieBtn.appendChild(emoji);
-          setTimeout(() => {
-            emoji.remove();
-          }, 700);
-        }
-      }
-
-      cookieBtn.addEventListener('click', (e) => {
-        count++;
-        updateCounter();
-        cookieBtn.classList.add('shrink');
-        setTimeout(() => cookieBtn.classList.remove('shrink'), 100);
-        burstEmojis();
-        // PostHog event
-        posthog.capture('cookie_clicked', { click_count: count });
-      });
-
+    function handleClick(e) {
+      count++;
       updateCounter();
-    </script>
+      cookieBtn.classList.add('shrink');
+      setTimeout(() => cookieBtn.classList.remove('shrink'), 100);
+      burstEmojis();
+    }
+
+    cookieBtn.addEventListener('click', handleClick);
+    cookieBtn.addEventListener('keydown', function(e) {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        handleClick();
+      }
+    });
+
+    updateCounter();
+  </script>
 </body>
-</html> 
+</html>
