@@ -27,191 +27,247 @@
     })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
 </script>
     
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        body {
-            height: 100vh;
-            background: linear-gradient(135deg, #f4e4bc, #d4b896);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
-        }
+    body {
+        height: 100vh;
+        background: linear-gradient(135deg, #f4e4bc, #d4b896);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Arial', sans-serif;
+        overflow: hidden;
+    }
 
-        .game-container {
-            text-align: center;
-            position: relative;
-        }
+    .game-container {
+        text-align: center;
+        position: relative;
+    }
 
-        .click-counter {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #8B4513;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            user-select: none;
-        }
+    .click-counter {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #8B4513;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        user-select: none;
+    }
 
-        .cookie-button {
-            width: 276px;
-            height: 276px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            position: relative;
-            transition: transform 0.1s cubic-bezier(.4,2,.6,1);
-            will-change: transform;
-            user-select: none;
-            /* Safari-specific fixes */
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
-            -webkit-tap-highlight-color: transparent;
-            padding: 0;
-            outline: none;
-            /* Safari hardware acceleration fixes */
-            -webkit-backface-visibility: hidden;
-            -webkit-transform-style: preserve-3d;
-            transform: translate3d(0,0,0);
-            -webkit-transform: translate3d(0,0,0);
-        }
+    .cookie-button {
+        width: 276px;
+        height: 276px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        position: relative;
+        transition: transform 0.1s cubic-bezier(.4,2,.6,1);
+        will-change: transform;
+        user-select: none;
+        /* Safari-specific fixes */
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+        padding: 0;
+        outline: none;
+        /* Safari hardware acceleration fixes */
+        -webkit-backface-visibility: hidden;
+        -webkit-transform-style: preserve-3d;
+        transform: translate3d(0,0,0);
+        -webkit-transform: translate3d(0,0,0);
+        /* Mobile Safari touch fixes */
+        touch-action: manipulation;
+        -webkit-appearance: none;
+    }
 
-        .cookie-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            pointer-events: none;
-            user-select: none;
-            -webkit-user-select: none;
-            display: block;
-            /* Safari hardware acceleration for image */
-            -webkit-backface-visibility: hidden;
-            transform: translate3d(0,0,0);
-            -webkit-transform: translate3d(0,0,0);
-        }
+    .cookie-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
+        display: block;
+        /* Safari hardware acceleration for image */
+        -webkit-backface-visibility: hidden;
+        transform: translate3d(0,0,0);
+        -webkit-transform: translate3d(0,0,0);
+    }
 
-        .cookie-button:focus {
-            outline: 3px solid #8B4513;
-            outline-offset: 4px;
-        }
+    .cookie-button:focus {
+        outline: 3px solid #8B4513;
+        outline-offset: 4px;
+    }
 
-        .emoji-burst {
-            position: absolute;
-            pointer-events: none;
-            font-size: 2.4rem;
-            z-index: 1000;
-            transition: all 0.8s ease-out;
+    .emoji-burst {
+        position: absolute;
+        pointer-events: none;
+        font-size: 2.4rem;
+        z-index: 1000;
+        transition: all 0.8s ease-out;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.5) translate3d(0,0,0);
+        /* Safari hardware acceleration for emoji */
+        -webkit-backface-visibility: hidden;
+        -webkit-transform: translate(-50%, -50%) scale(0.5) translate3d(0,0,0);
+    }
+
+    @keyframes burst {
+        0% {
             opacity: 1;
-            transform: translate(-50%, -50%) scale(0.5) translate3d(0,0,0);
-            /* Safari hardware acceleration for emoji */
-            -webkit-backface-visibility: hidden;
-            -webkit-transform: translate(-50%, -50%) scale(0.5) translate3d(0,0,0);
+            transform: translate(-50%, -50%) scale(0);
         }
+        50% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+        100% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+    }
 
-        @keyframes burst {
-            0% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(0);
-            }
-            50% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1.2);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-        }
-
-        /* Ensure the cookie gets smaller with each click */
-        .cookie-shrink {
-            transform: translate3d(0,0,0) scale3d(0.9, 0.9, 1);
-            -webkit-transform: translate3d(0,0,0) scale3d(0.9, 0.9, 1);
-        }
-    </style>
+    /* Ensure the cookie gets smaller with each click */
+    .cookie-shrink {
+        transform: translate3d(0,0,0) scale3d(0.9, 0.9, 1);
+        -webkit-transform: translate3d(0,0,0) scale3d(0.9, 0.9, 1);
+    }
+</style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="click-counter" id="clickCounter">Clicked 0 times</div>
+<div class="game-container">
+    <div class="click-counter" id="clickCounter">Clicked 0 times</div>
+    
+    <button class="cookie-button" id="cookieButton">
+        <img src="https://raw.githubusercontent.com/objartel/em-button/main/cookie.png" alt="Cookie" class="cookie-image">
+    </button>
+</div>
+
+<script>
+    let clickCount = 0;
+    const cookieButton = document.getElementById('cookieButton');
+    const clickCounter = document.getElementById('clickCounter');
+
+    function updateCounter() {
+        clickCounter.textContent = `Clicked ${clickCount} times`;
+    }
+
+    function createEmojieBurst(centerX, centerY) {
+        const numEmojis = 6 + Math.floor(Math.random() * 6); // Random number between 6-11
         
-        <button class="cookie-button" id="cookieButton">
-            <img src="https://raw.githubusercontent.com/objartel/em-button/main/cookie.png" alt="Cookie" class="cookie-image">
-        </button>
-    </div>
-
-    <script>
-        let clickCount = 0;
-        const cookieButton = document.getElementById('cookieButton');
-        const clickCounter = document.getElementById('clickCounter');
-
-        function updateCounter() {
-            clickCounter.textContent = `Clicked ${clickCount} times`;
-        }
-
-        function createEmojieBurst(centerX, centerY) {
-            const numEmojis = 6 + Math.floor(Math.random() * 6); // Random number between 6-11
+        for (let i = 0; i < numEmojis; i++) {
+            const emoji = document.createElement('div');
+            emoji.className = 'emoji-burst';
+            emoji.textContent = '🍪';
             
-            for (let i = 0; i < numEmojis; i++) {
-                const emoji = document.createElement('div');
-                emoji.className = 'emoji-burst';
-                emoji.textContent = '🍪';
-                
-                // Start at center
-                emoji.style.left = centerX + 'px';
-                emoji.style.top = centerY + 'px';
-                
-                document.body.appendChild(emoji);
-                
-                // Calculate random direction for burst
-                const angle = Math.random() * 360; // Completely random angle
-                const distance = 80 + Math.random() * 100; // Random distance between 80-180px
-                const radians = (angle * Math.PI) / 180;
-                const offsetX = Math.cos(radians) * distance;
-                const offsetY = Math.sin(radians) * distance;
-                
-                // Add slight random delay for more natural burst effect
-                const delay = Math.random() * 100;
-                
-                // Animate from center to final position
-                setTimeout(() => {
-                    emoji.style.left = (centerX + offsetX) + 'px';
-                    emoji.style.top = (centerY + offsetY) + 'px';
-                    emoji.style.opacity = '0';
-                    const rotation = Math.random() * 720 - 360; // Random rotation between -360 and 360 degrees
-                    emoji.style.transform = `translate(-50%, -50%) scale(1.5) rotate(${rotation}deg) translate3d(0,0,0)`;
-                    emoji.style.webkitTransform = `translate(-50%, -50%) scale(1.5) rotate(${rotation}deg) translate3d(0,0,0)`;
-                }, 50 + delay);
-                
-                // Remove emoji after animation
-                setTimeout(() => {
-                    if (emoji.parentNode) {
-                        emoji.parentNode.removeChild(emoji);
-                    }
-                }, 1000 + delay);
-            }
-        }
-
-        function shrinkCookie() {
-            // Add the shrink class to trigger the scale down
-            cookieButton.classList.add('cookie-shrink');
+            // Start at center
+            emoji.style.left = centerX + 'px';
+            emoji.style.top = centerY + 'px';
             
-            // Remove the class exactly after 100ms like in your document
+            document.body.appendChild(emoji);
+            
+            // Calculate random direction for burst
+            const angle = Math.random() * 360; // Completely random angle
+            const distance = 80 + Math.random() * 100; // Random distance between 80-180px
+            const radians = (angle * Math.PI) / 180;
+            const offsetX = Math.cos(radians) * distance;
+            const offsetY = Math.sin(radians) * distance;
+            
+            // Add slight random delay for more natural burst effect
+            const delay = Math.random() * 100;
+            
+            // Animate from center to final position
             setTimeout(() => {
-                cookieButton.classList.remove('cookie-shrink');
-            }, 100);
+                emoji.style.left = (centerX + offsetX) + 'px';
+                emoji.style.top = (centerY + offsetY) + 'px';
+                emoji.style.opacity = '0';
+                const rotation = Math.random() * 720 - 360; // Random rotation between -360 and 360 degrees
+                emoji.style.transform = `translate(-50%, -50%) scale(1.5) rotate(${rotation}deg) translate3d(0,0,0)`;
+                emoji.style.webkitTransform = `translate(-50%, -50%) scale(1.5) rotate(${rotation}deg) translate3d(0,0,0)`;
+            }, 50 + delay);
+            
+            // Remove emoji after animation
+            setTimeout(() => {
+                if (emoji.parentNode) {
+                    emoji.parentNode.removeChild(emoji);
+                }
+            }, 1000 + delay);
         }
+    }
 
-        cookieButton.addEventListener('click', function(event) {
+    function shrinkCookie() {
+        // Add the shrink class to trigger the scale down
+        cookieButton.classList.add('cookie-shrink');
+        
+        // Remove the class exactly after 100ms like in your document
+        setTimeout(() => {
+            cookieButton.classList.remove('cookie-shrink');
+        }, 100);
+    }
+
+    cookieButton.addEventListener('click', function(event) {
+        // Skip if already handled by touch events
+        if (touchHandled) {
+            touchHandled = false;
+            return;
+        }
+        
+        clickCount++;
+        updateCounter();
+        
+        // Get click position relative to the viewport
+        const rect = cookieButton.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        // Create emoji burst
+        createEmojieBurst(centerX, centerY);
+        
+        // Shrink the cookie
+        shrinkCookie();
+        
+        // Send event to PostHog
+        if (typeof posthog !== 'undefined') {
+            posthog.capture('cookie_clicked', {
+                click_count: clickCount,
+                input_method: 'mouse',
+                timestamp: Date.now()
+            });
+        }
+        
+        // Prevent default behavior for Safari
+        event.preventDefault();
+    });
+
+    // Prevent context menu on long press for mobile Safari
+    cookieButton.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+    });
+
+    // Mobile Safari touch handling
+    let touchHandled = false;
+    
+    cookieButton.addEventListener('touchstart', function(event) {
+        event.preventDefault();
+        touchHandled = false;
+    });
+
+    cookieButton.addEventListener('touchend', function(event) {
+        event.preventDefault();
+        
+        if (!touchHandled) {
+            touchHandled = true;
+            
+            // Handle the click action
             clickCount++;
             updateCounter();
             
-            // Get click position relative to the viewport
+            // Get button center position
             const rect = cookieButton.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
@@ -226,58 +282,50 @@
             if (typeof posthog !== 'undefined') {
                 posthog.capture('cookie_clicked', {
                     click_count: clickCount,
-                    input_method: 'mouse',
+                    input_method: 'touch',
                     timestamp: Date.now()
                 });
             }
+        }
+    });
+
+    cookieButton.addEventListener('touchcancel', function(event) {
+        touchHandled = false;
+    });
+
+    // Keyboard navigation event tracking
+    cookieButton.addEventListener('keydown', function(event) {
+        if (event.key === ' ' || event.key === 'Enter') {
+            event.preventDefault();
             
-            // Prevent default behavior for Safari
-            event.preventDefault();
-        });
-
-        // Prevent context menu on long press for mobile Safari
-        cookieButton.addEventListener('contextmenu', function(event) {
-            event.preventDefault();
-        });
-
-        // Additional Safari compatibility for touch events
-        cookieButton.addEventListener('touchstart', function(event) {
-            event.preventDefault();
-        });
-
-        // Keyboard navigation event tracking
-        cookieButton.addEventListener('keydown', function(event) {
-            if (event.key === ' ' || event.key === 'Enter') {
-                event.preventDefault();
-                
-                clickCount++;
-                updateCounter();
-                
-                // Get button center position
-                const rect = cookieButton.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                
-                // Create emoji burst
-                createEmojieBurst(centerX, centerY);
-                
-                // Shrink the cookie
-                shrinkCookie();
-                
-                // Send event to PostHog
-                if (typeof posthog !== 'undefined') {
-                    posthog.capture('cookie_clicked', {
-                        click_count: clickCount,
-                        input_method: 'keyboard',
-                        key: event.key,
-                        timestamp: Date.now()
-                    });
-                }
+            clickCount++;
+            updateCounter();
+            
+            // Get button center position
+            const rect = cookieButton.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // Create emoji burst
+            createEmojieBurst(centerX, centerY);
+            
+            // Shrink the cookie
+            shrinkCookie();
+            
+            // Send event to PostHog
+            if (typeof posthog !== 'undefined') {
+                posthog.capture('cookie_clicked', {
+                    click_count: clickCount,
+                    input_method: 'keyboard',
+                    key: event.key,
+                    timestamp: Date.now()
+                });
             }
-        });
+        }
+    });
 
-        // Initialize the game
-        updateCounter();
-    </script>
+    // Initialize the game
+    updateCounter();
+</script>
 </body>
 </html>
