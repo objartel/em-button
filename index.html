@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cookie Clicker</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #f7e7ce;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+    }
+    .counter {
+      font-size: 2rem;
+      margin-bottom: 32px;
+      color: #7c4a03;
+      text-shadow: 1px 1px 0 #fff8e1;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .cookie-btn {
+      background: none;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s cubic-bezier(.4,2,.6,1);
+      will-change: transform;
+    }
+    .cookie-btn.shrink {
+      transform: scale(0.9);
+    }
+    .cookie-img {
+      width: 300px;
+      height: 300px;
+      user-select: none;
+      pointer-events: none;
+      display: block;
+    }
+    .burst {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      font-size: 2rem;
+      pointer-events: none;
+      opacity: 0;
+      animation: burst 0.7s forwards;
+    }
+    @keyframes burst {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      80% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--x), var(--y)) scale(1.5);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="counter" id="counter">Clicked 0 times</div>
+    <button class="cookie-btn" id="cookieBtn">
+      <img src="./cookie.png" alt="Cookie" class="cookie-img" draggable="false">
+    </button>
+  </div>
+  <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))} }(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Re Os As Pe Ms Fs capture Ve calculateEventProperties js register register_once register_for_session unregister unregister_for_session qs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty zs Ls createPersonProfile Us Rs Bs opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ds debug I Ns getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_SCMTYgrWdLeEHjj1bVLF9qAAOjliZZmRIMT8sfGm5eo', {
+            api_host: 'https://eu.i.posthog.com',
+            defaults: '2025-05-24',
+            person_profiles: 'identified_only',
+        })
+    </script>
+    <script>
+      const counter = document.getElementById('counter');
+      const cookieBtn = document.getElementById('cookieBtn');
+      let count = 0;
+
+      function updateCounter() {
+        counter.textContent = `Clicked ${count} time${count === 1 ? '' : 's'}`;
+      }
+
+      function burstEmojis(x, y) {
+        const numEmojis = 8;
+        for (let i = 0; i < numEmojis; i++) {
+          const angle = (2 * Math.PI / numEmojis) * i + (Math.random() - 0.5) * 0.3;
+          const distance = 120 + Math.random() * 40;
+          const dx = Math.cos(angle) * distance;
+          const dy = Math.sin(angle) * distance;
+          const emoji = document.createElement('div');
+          emoji.className = 'burst';
+          emoji.textContent = '🍪';
+          emoji.style.setProperty('--x', `${dx}px`);
+          emoji.style.setProperty('--y', `${dy}px`);
+          cookieBtn.appendChild(emoji);
+          setTimeout(() => {
+            emoji.remove();
+          }, 700);
+        }
+      }
+
+      cookieBtn.addEventListener('click', (e) => {
+        count++;
+        updateCounter();
+        cookieBtn.classList.add('shrink');
+        setTimeout(() => cookieBtn.classList.remove('shrink'), 100);
+        burstEmojis();
+        // PostHog event
+        posthog.capture('cookie_clicked', { click_count: count });
+      });
+
+      updateCounter();
+    </script>
+</body>
+</html> 
