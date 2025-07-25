@@ -46,16 +46,17 @@
       outline: none;
       cursor: pointer;
       padding: 0;
+      margin: 0;
       position: relative;
-      /* Use flex instead of inline-flex for Safari */
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      /* Use block instead of flex for better Safari compatibility */
+      display: block;
       transition: transform 0.1s cubic-bezier(.4,2,.6,1);
       will-change: transform;
-      /* Ensure proper sizing */
-      width: auto;
-      height: auto;
+      /* Explicit sizing to ensure visibility */
+      width: 300px;
+      height: 300px;
+      /* Force layout */
+      overflow: visible;
     }
     .cookie-btn:focus {
       outline: 2px solid #7c4a03;
